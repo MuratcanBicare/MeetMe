@@ -6,11 +6,13 @@ using System.Text;
 
 namespace MeetMe.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser> // identitydbcontext'i benim oluşturduğum ApplicationUser sınıfıyla miras al
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
+
+        public DbSet<Meeting> Meetings  { get; set; }
     }
 }
