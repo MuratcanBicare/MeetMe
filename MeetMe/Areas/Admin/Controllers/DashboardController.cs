@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MeetMe.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,13 @@ using System.Threading.Tasks;
 
 namespace MeetMe.Areas.Admin.Controllers
 {
-    [Area("Admin")]
-    [Authorize(Roles="admin")]
-    public class DashboardController : Controller
+ 
+    public class DashboardController : AdminBaseController
     {
+        public DashboardController(ApplicationDbContext dbContext) : base(dbContext)
+        {
+        }
+
         public IActionResult Index()
         {
             return View();
