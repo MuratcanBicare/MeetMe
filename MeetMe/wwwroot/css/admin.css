@@ -8,3 +8,27 @@
     font-size: 80%;
     color: #dc3545;
 }
+
+.edit-meeting-photo-preview {
+    height: 100px;
+}
+
+
+
+.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 80px;
+    border: 6px solid #6c757d;
+    border-radius: 10px;
+    font-style: normal;
+    font-family: "Font Awesome 5 Free";
+    font-size: 50px;
+    color: var(--gray);
+}
+
+    .no-image::before {
+        content: "\f03e";
+    }

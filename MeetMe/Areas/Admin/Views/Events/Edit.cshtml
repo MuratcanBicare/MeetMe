@@ -1,6 +1,6 @@
-﻿@model NewMeetingViewModel
+﻿@model EditMeetingViewModel
 @{
-    ViewData["Title"] = "New Meeting";
+    ViewData["Title"] = "Edit Meeting";
 }
 
 <div class="row">
@@ -40,9 +40,14 @@
                     </div>
                     <div class="form-group">
                         <label for="exampleInputFile">File input</label>
+                        <div>
+                            <input type="hidden" asp-for="ExisingPhotoPath" />
+                            @{ string showPreview = string.IsNullOrEmpty(Model.ExisingPhotoPath) ? "display:none" : "";}
+                            <img src="~/img/@Model.ExisingPhotoPath" alt="@Model.Title" height="100" styel="@showPreview" class="edit-meeting-photo-preview img-thumbnail mb-2" id="img-preview"/>
+                        </div>
                         <div class="input-group">
                             <div class="custom-file">
-                                <input asp-for="Photo" class="custom-file-input" id="exampleInputFile">
+                                <input asp-for="Photo" class="custom-file-input" id="exampleInputFile" data-preview-image-target="#img-preview">
                                 <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                                 <span asp-validation-for="Photo"></span>
                             </div>
@@ -52,7 +57,7 @@
                 <!-- /.card-body -->
 
                 <div class="card-footer">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>
@@ -67,16 +72,13 @@
 
     <script>
         bsCustomFileInput.init();
-        var d = new Date();
-        d.setHours(12);
-        d.setMinutes(0);
+
         $("#meetingtimetd").datetimepicker({
             icons: {
                 time: 'fas fa-clock'
             },
             //locale: 'tr',
-            format: 'DD.MM.YYYY HH:mm',
-            defaultDate: d
+            format: 'DD.MM.YYYY HH:mm'
         });
     </script>
 }
