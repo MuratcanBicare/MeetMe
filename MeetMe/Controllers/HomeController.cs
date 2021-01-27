@@ -1,5 +1,6 @@
 ﻿using MeetMe.Data;
 using MeetMe.Models;
+using MeetMe.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -62,7 +63,7 @@ namespace MeetMe.Controllers
             if (meeting == null) return NotFound();
             
             string result = "";
-
+            // eğer toplantının kullanıcıları yoksa ekle
             if (meeting.Participants.Contains(user))
             {
                 meeting.Participants.Remove(user);
@@ -76,6 +77,14 @@ namespace MeetMe.Controllers
             _db.SaveChanges();
 
             return Json(new { result });
+        }
+
+        [Authorize]
+
+        public IActionResult MyMeetings() 
+        {
+            var userId = User.Id();
+            return View(_db.Meetings.Where(x => x.Participants.Any(p => p.Id == userId)).ToList());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

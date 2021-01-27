@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MeetMe.Utilities
@@ -16,5 +17,9 @@ namespace MeetMe.Utilities
             return Guid.NewGuid().ToString() + ext;
         }
 
+        public static string Id(this ClaimsPrincipal user)
+        {
+            return user.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
     }
 }
