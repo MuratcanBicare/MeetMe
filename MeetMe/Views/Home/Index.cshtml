@@ -7,6 +7,10 @@
     <h1 class="display-4">Meet Me</h1>
     <p>A website where you can meet me!</p>
 </div>
+@if (!User.Identity.IsAuthenticated)
+{
+    <alert-messeage class="text-center" alert-type="Success">Hurry up to <a asp-area="Identity" asp-page="/Account/Register">sign up</a> to be able to join many fun events</alert-messeage>
+}
 <div class="row">
     @foreach (var meeting in Model.Meetings)
     {
