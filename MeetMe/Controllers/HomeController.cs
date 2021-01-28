@@ -18,31 +18,49 @@ namespace MeetMe.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _db;
-
+        const int PageSize = 10;
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext applicationDbContext)
         {
             _logger = logger;
             _db = applicationDbContext;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
+            var totalItemsCount = _db.Meetings.Count();
+            var pageCount = (int)Math.Ceiling((double)totalItemsCount / PageSize);
+
             var loggedIn = User.Identity.IsAuthenticated;
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var meetings = _db.Meetings
                 .OrderByDescending(x => x.MeetingTime)
-                .Select(x=> new MeetingViewModel()
-                { 
+                .Select(x => new MeetingViewModel()
+                {
                     Id = x.Id,
                     Title = x.Title,
                     Description = x.Description,
                     MeetingTime = x.MeetingTime,
                     PhotoPath = x.PhotoPath,
                     Place = x.Place,
-                    IsJoined = loggedIn && x.Participants.Any(p=> p.Id == userId)
+                    IsJoined = loggedIn && x.Participants.Any(p => p.Id == userId)
                 })
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize)
                 .ToList();
-            return View(meetings);
+
+            var vm = new HomeViewModel()
+            {
+                Meetings = meetings,
+                ItemsCount = meetings.Count,
+                TotalItemsCount = totalItemsCount,
+                PageCount = pageCount,
+                PageSize = PageSize,
+                Page = page,
+                IsPrevious = page > 1,
+                IsNext = page < pageCount
+            };
+
+            return View(vm);
         }
 
         public IActionResult Privacy()
@@ -55,13 +73,13 @@ namespace MeetMe.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult JoinMeeting(int meetingId)
         {
-            var meeting = _db.Meetings.Include(x=>x.Participants).FirstOrDefault(x => x.Id == meetingId);
+            var meeting = _db.Meetings.Include(x => x.Participants).FirstOrDefault(x => x.Id == meetingId);
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = _db.Users.Find(userId);
 
             if (user == null) return Unauthorized();
             if (meeting == null) return NotFound();
-            
+
             string result = "";
             // eğer toplantının kullanıcıları yoksa ekle
             if (meeting.Participants.Contains(user))
@@ -73,15 +91,30 @@ namespace MeetMe.Controllers
             {
                 meeting.Participants.Add(user);
                 result = "joined";
+
+
             }
+
+            //if (user.Meetings.Where(x => x.MeetingTime))
+            //{
+
+            //}
+
+            //if (meeting.Participants.FirstOrDefault(x => x.Id == userId).Meetings.Any(p => p.MeetingTime.Value.ToShortTimeString() == meeting.MeetingTime.Value.ToShortTimeString()))
+            //{
+            //    result = "disabled";
+            //    return View();
+            //}
+
             _db.SaveChanges();
+
 
             return Json(new { result });
         }
 
         [Authorize]
 
-        public IActionResult MyMeetings() 
+        public IActionResult MyMeetings()
         {
             var userId = User.Id();
             return View(_db.Meetings.Where(x => x.Participants.Any(p => p.Id == userId)).ToList());
