@@ -1,0 +1,20 @@
+﻿@model Meeting
+
+
+@if (string.IsNullOrEmpty(Model.PhotoPath))
+{
+    <img src="~/img/meeting.png" class="w-25 ml-3 float-right " alt="meeting">
+}
+else
+{
+
+    <img src="~/img/@Model.PhotoPath" class="w-25 ml-3 float-right" alt="@Model.Title">
+}
+
+<h1>@Model.Title</h1>
+
+<p>@Model.Description</p>
+
+<p><strong>Place:</strong> @Model.Place</p>
+
+<p><strong>Time:</strong> @Model.MeetingTime</p>

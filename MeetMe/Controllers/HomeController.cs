@@ -38,6 +38,7 @@ namespace MeetMe.Controllers
                 {
                     Id = x.Id,
                     Title = x.Title,
+                    Slug = x.Slug,
                     Description = x.Description,
                     MeetingTime = x.MeetingTime,
                     PhotoPath = x.PhotoPath,
@@ -63,6 +64,7 @@ namespace MeetMe.Controllers
             return View(vm);
         }
 
+        [Route("Privacy")]
         public IActionResult Privacy()
         {
             return View();
